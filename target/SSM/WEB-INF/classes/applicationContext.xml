@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--配置属性,做属性值的注入-->
+        <!--数据库的驱动-->
+        <property name="driverClassName">
+            <value>com.mysql.cj.jdbc.Driver</value>
+        </property>
+       <!-- 数据库的连接地址-->
+        <property name="url">
+            <value>jdbc:mysql://localhost:3306/bookmanager?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=GMT%2B8&amp;useSSL=false</value>
+        </property>
+        <!--用户名-->
+        <property name="username" value="root" />
+        <!--密码-->
+        <property name="password" value="123456" />
+    </bean>
+    <!--配置SqlSessionFatoryBean-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--分页插件-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <value>
+                            <!-- 这里设定你的数据库类型 -->
+                            helperDialect=mysql
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 加载mybatis-config.xml文件-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 设置mapper/**.xml文件的路径-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+    <!--mapper/*.xml文件对应的接口所在包-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="cn.jbit.dao" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <!--事务管理-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--声明式的事务管理-->
+    <tx:annotation-driven transaction-manager="txManager" />
+    <!--自动装备扫描包-->
+    <context:component-scan base-package="cn.jbit.dao,cn.jbit.service"/>
+
+    <!--导入service.xml文件-->
+    <import resource="service.xml" />
+</beans>

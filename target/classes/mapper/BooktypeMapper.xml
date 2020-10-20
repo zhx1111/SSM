@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.jbit.dao.BookTypeMapper">
+
+    <resultMap id="bookTypeResultMap" type="BookType">
+        <id column="tid" property="tid" />
+        <result column="tname" property="tname" />
+        <!--一对多关系-->
+        <collection property="secondList" resultMap="bookSecondResultMap" javaType="BookSecond"/>
+    </resultMap>
+    <resultMap id="bookSecondResultMap" type="BookSecond">
+        <id column="sid" property="sid" />
+        <result column="sname" property="sname"/>
+    </resultMap>
+    <!--两表连接查询-->
+    <select id="typeAndSecond" resultMap="bookTypeResultMap">
+        SELECT t.tid,t.tname,s.sid,s.sname
+        FROM booktype t
+        INNER JOIN booksecond s ON t.tid=s.tid
+    </select>
+    <select id="getAllType" resultType="BookType">
+        SELECT * FROM Booktype
+    </select>
+    <!-- 添加-->
+    <insert id="AddType">
+        INSERT INTO bookType(tname)
+        VALUES(#{tname})
+    </insert>
+    <!--删除-->
+    <delete id="DelType" parameterType="int">
+        delete from bookType where tid=#{tid}
+    </delete>
+</mapper>

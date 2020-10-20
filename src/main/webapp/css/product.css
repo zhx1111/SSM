@@ -1,0 +1,33 @@
+.imgMain{
+    width:800px;
+}
+dl,dt,dd{
+    width:190px;
+    margin: 0px;
+    padding: 0px;
+}
+.imgMain dl{
+    width:190px;
+    float: left;
+}
+.imgMain dl dt img{
+    width:150px;
+    height: 150px;
+}
+.imgMain dd{
+    font-size: 12px;
+    line-height: 25px;
+}
+.page{
+    clear:both;
+}
+.imgMain span.price{
+    color:red;
+}
+.imgMain span.bname{
+    font-weight: bold;
+    font-size: 14px;
+}
+.imgMain dt img{
+    text-align: center;
+}

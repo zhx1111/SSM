@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.jbit.dao.BookMapper">
+    <resultMap id="bookResultMap" type="Book">
+        <id property="bid" column="bid"/>
+        <result property="bname" column="bname"/>
+        <result property="price" column="price"/>
+        <result property="image" column="image"/>
+        <result property="description" column="description"/>
+        <result property="sendDate" column="sendDate"/>
+        <!--多对一关系-->
+        <association property="bookSecond" javaType="BookSecond"  resultMap="bookSecondResultMap">
+        </association>
+    </resultMap>
+
+    <resultMap id="bookSecondResultMap" type="BookSecond">
+        <id property="sid" column="sid"/>
+        <result property="sname" column="sname"/>
+        <!--多对一关系-->
+        <association property="bookType" javaType="BookType" resultMap="bookTypeResultMap"/>
+    </resultMap>
+
+    <resultMap id="bookTypeResultMap" type="BookType">
+        <id column="tid" property="tid" />
+        <result column="tname" property="tname" />
+    </resultMap>
+
+
+    <select id="getAllBook" resultMap="bookResultMap">
+        SELECT b.`bid`,b.`bname`,b.`price`,b.`sendDate`,s.`sname`,b.description,b.image
+        FROM book b
+        INNER JOIN booksecond s ON b.`sid`=s.`sid`
+    </select>
+    <!-- 添加-->
+    <insert id="addBook" parameterType="Book">
+        INSERT INTO book(bname,price,image,description,sendDate,sid)
+        VALUES(#{bname},#{price},#{image},#{description},#{sendDate},#{bookSecond.sid})
+    </insert>
+    <!--删除-->
+    <delete id="delBook" parameterType="int">
+        delete from book where bid=#{id}
+    </delete>
+    <!-- 一级分类二级分类查询-->
+    <select id="getBookByType" resultMap="bookResultMap">
+        SELECT b.`bid`,b.`bname`,b.`price`,b.`image`,b.`description`,b.sendDate,s.sid,s.sname,t.tid,t.tname
+        FROM book b
+        INNER JOIN booksecond s ON b.`sid`=s.sid
+        INNER JOIN booktype t ON t.tid=s.tid
+        WHERE 1=1
+        <if test="tid!=null">
+            AND t.tid=#{tid}
+        </if>
+        <if test="sid!=null">
+            and s.sid=#{sid}
+        </if>
+    </select>
+
+
+    <select id="getbook" resultType="Book" parameterType="int">
+        select * from book
+        where bid = #{bid}
+    </select>
+
+</mapper>

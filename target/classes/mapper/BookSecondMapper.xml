@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.jbit.dao.BookSecondMapper">
+    <select id="getSecondByTid" resultType="BookSecond" parameterType="int">
+        SELECT * FROM bookSecond WHERE tid=#{tid}
+    </select>
+    <resultMap id="bookSecondResultMap" type="BookSecond">
+        <id property="sid" column="sid"/>
+        <result property="sname" column="sname"/>
+        <association property="bookType" javaType="BookType"  resultMap="bookTypeResultMap">
+        </association>
+    </resultMap>
+
+    <resultMap id="bookTypeResultMap" type="BookType">
+        <id property="tid" column="tid"/>
+        <result property="tname" column="tname"/>
+    </resultMap>
+
+    <select id="getAll" resultMap="bookSecondResultMap">
+        SELECT s.sname,s.sid,t.tid,t.tname FROM booktype t
+        INNER JOIN booksecond s ON t.tid = s.tid
+    </select>
+    <!-- 添加-->
+    <insert id="AddSecond" parameterType="BookSecond">
+        INSERT INTO bookSecond(sname,tid)
+        VALUES(#{sname},#{bookType.tid})
+    </insert>
+    <!--删除-->
+    <delete id="DelSecond" parameterType="int">
+        delete from bookSecond where sid=#{sid}
+    </delete>
+</mapper>

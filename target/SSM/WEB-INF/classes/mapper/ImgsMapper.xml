@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.jbit.dao.ImgsMapper">
+
+    <!--登录-->
+    <insert id="addImag" parameterType="Imgs">
+        insert into imgs(img) values(#{img})
+    </insert>
+
+    <!--轮播图-->
+    <select id="AllImg" resultType="Imgs">
+        select * from imgs
+    </select>
+
+</mapper>
